@@ -103,19 +103,25 @@ exports.handler = async function(event) {
 
     for (let reviewIndex=0; reviewIndex < reviews.length; reviewIndex++){
 
-      let reviewId = reviews[reviewIndex].data()
+      let reviewId = reviews[reviewIndex].id
 
-      let reviewObject = {}
+      let reviewData = reviews[reviewIndex].data()
 
-      let reviewBodyQuery = await db.collection('reviews').doc(reviewId.body).get()
+      let reviewObject = {
+        body: reviewData.body
+      }
 
-      let reviewBody = reviewBodyQuery.data()
+      // let reviewBodyQuery = await db.collection('reviews').doc(reviewId.body).get()
 
-      reviewObject.body = reviewBody.body
+      // let reviewBody = reviewBodyQuery.data()
 
-      returnValue.reviews.push(reviewObject)
+      // reviewObject.body = reviewBody.body
+
+      sectionObject.reviews.push(reviewObject)
 
     }
+
+    returnValue.sections.push(sectionObject)
     
   }
 
