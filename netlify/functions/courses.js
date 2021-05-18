@@ -94,34 +94,59 @@ exports.handler = async function(event) {
     returnValue.sections.push(sectionObject)
 
     // 🔥 your code for the reviews/ratings goes here
-    
-    returnValue.reviews = []
 
+    // create a new array under the section object for multiple reivews
+    sectionObject.reviews = []
+
+    // ask Firebase for the reivews with the same section ID as the section
     let reviewsQuery = await db.collection('reviews').where(`sectionId`, `==`, sectionId).get()
     
+    // get reviews data from the returned doc
     let reviews = reviewsQuery.docs
 
-    for (let reviewIndex=0; reviewIndex < reviews.length; reviewIndex++){
+    // loop through the reviews
+    for (let reviewIndex=0; reviewIndex<reviews.length; reviewIndex++){
 
-      let reviewId = reviews[reviewIndex].id
-
+      // get the content of the review data
       let reviewData = reviews[reviewIndex].data()
 
+      // create a new review object witht the content of this data
       let reviewObject = {
-        body: reviewData.body
+        reviewBody: reviewData.body,
       }
 
-      // let reviewBodyQuery = await db.collection('reviews').doc(reviewId.body).get()
-
-      // let reviewBody = reviewBodyQuery.data()
-
-      // reviewObject.body = reviewBody.body
-
+      // push the review object into the section object
       sectionObject.reviews.push(reviewObject)
 
     }
 
-    returnValue.sections.push(sectionObject)
+    // add review count object to the section object
+
+    let reviewCount = {
+      reviewCount: reviews.length
+    }
+
+    sectionObject.reviews.push(reviewCount)
+
+    // add average rating
+    for (let reviewIndex=0; reviewIndex<reviews.length; reviewIndex++){
+
+      // get the content of the review data
+      let reviewData = reviews[reviewIndex].data()
+
+      let rating = 0
+
+      sumRating=rating+reviewData.rating
+
+      console.log(`Sum: ${sumRating}`)
+    }
+
+    // push the review object into the section object
+    let averageRating= {
+      averageSectionRating: sumRating/reviews.length
+    }
+    sectionObject.reviews.push(averageRating)
+
     
   }
 
