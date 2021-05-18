@@ -94,6 +94,29 @@ exports.handler = async function(event) {
     returnValue.sections.push(sectionObject)
 
     // 🔥 your code for the reviews/ratings goes here
+    
+    returnValue.reviews = []
+
+    let reviewsQuery = await db.collection('reviews').where(`sectionId`, `==`, sectionId).get()
+    
+    let reviews = reviewsQuery.docs
+
+    for (let reviewIndex=0; reviewIndex < reviews.length; reviewIndex++){
+
+      let reviewId = reviews[reviewIndex].data()
+
+      let reviewObject = {}
+
+      let reviewBodyQuery = await db.collection('reviews').doc(reviewId.body).get()
+
+      let reviewBody = reviewBodyQuery.data()
+
+      reviewObject.body = reviewBody.body
+
+      returnValue.reviews.push(reviewObject)
+
+    }
+    
   }
 
   // return the standard response
